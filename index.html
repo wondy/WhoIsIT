@@ -210,6 +210,19 @@
         let spinning = false;
         let currentRotation = 0;
         let spinSpeed = 0;
+   function announceWinner() {
+            const totalSlices = names.length;
+            const sliceAngle = (2 * Math.PI) / totalSlices;
+            // Adjust the rotation to align with the top (red arrow)
+            const adjustedRotation = (currentRotation % (2 * Math.PI) + sliceAngle / 2) % (2 * Math.PI);
+            // Calculate the index of the winning slice
+            const winningIndex = Math.floor(adjustedRotation / sliceAngle);
+            const winner = names[winningIndex];
+            resultDiv.textContent = `${winner} is to be pitied!`;
+            createConfetti();
+            animateBigName(winner);
+            flashWinningSlice(winningIndex);
+        }
 
         function drawWheel(flashingIndex = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -239,7 +252,9 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 20px Arial';
-                ctx.fillText(names[i], 140, 0);
+                // Rotate text 180 degrees so it's readable from outside the wheel
+                ctx.rotate(Math.PI);
+                ctx.fillText(names[i], -140, 0);
                 ctx.restore();
             }
 
