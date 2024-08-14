@@ -233,11 +233,11 @@
             animate();
         }
 
-        function announceWinner() {
+    function announceWinner() {
             const totalSlices = names.length;
             const sliceAngle = (2 * Math.PI) / totalSlices;
             // Calculate the winning index based on the current rotation
-            const winningIndex = (totalSlices - Math.floor(currentRotation / sliceAngle) % totalSlices) % totalSlices;
+            const winningIndex = Math.floor(currentRotation / sliceAngle) % totalSlices;
             const winner = names[winningIndex];
             resultDiv.textContent = `${winner} is to be pitied!`;
             createConfetti();
