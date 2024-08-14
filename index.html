@@ -246,7 +246,7 @@
             ctx.restore();
         }
 
-        function spin() {
+function spin() {
             if (spinning || names.length < 2) return;
 
             spinning = true;
@@ -272,13 +272,13 @@
         function announceWinner() {
             const totalSlices = names.length;
             const sliceAngle = (2 * Math.PI) / totalSlices;
-            const adjustedRotation = (currentRotation % (2 * Math.PI));
-            const winningSlice = Math.floor(adjustedRotation / sliceAngle);
-            const winner = names[(totalSlices - winningSlice) % totalSlices];
+            // Calculate the index of the winning slice
+            const winningIndex = Math.floor(((2 * Math.PI - (currentRotation % (2 * Math.PI))) % (2 * Math.PI)) / sliceAngle);
+            const winner = names[winningIndex];
             resultDiv.textContent = `${winner} is to be pitied!`;
             createConfetti();
             animateBigName(winner);
-            flashWinningSlice(winningSlice);
+            flashWinningSlice(winningIndex);
         }
 
         function flashWinningSlice(winningIndex) {
