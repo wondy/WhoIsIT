@@ -210,13 +210,34 @@
         let spinning = false;
         let currentRotation = 0;
         let spinSpeed = 0;
-   function announceWinner() {
+  function spin() {
+            if (spinning || names.length < 2) return;
+
+            spinning = true;
+            spinSpeed = Math.random() * 0.2 + 0.1;
+            resultDiv.textContent = '';
+
+            function animate() {
+                currentRotation += spinSpeed;
+                spinSpeed *= 0.99;
+                drawWheel();
+
+                if (spinSpeed > 0.001) {
+                    requestAnimationFrame(animate);
+                } else {
+                    spinning = false;
+                    announceWinner();
+                }
+            }
+
+            animate();
+        }
+
+        function announceWinner() {
             const totalSlices = names.length;
             const sliceAngle = (2 * Math.PI) / totalSlices;
-            // Adjust the rotation to align with the top (red arrow)
-            const adjustedRotation = (currentRotation % (2 * Math.PI) + sliceAngle / 2) % (2 * Math.PI);
-            // Calculate the index of the winning slice
-            const winningIndex = Math.floor(adjustedRotation / sliceAngle);
+            // Calculate the winning index based on the current rotation
+            const winningIndex = (totalSlices - Math.floor(currentRotation / sliceAngle) % totalSlices) % totalSlices;
             const winner = names[winningIndex];
             resultDiv.textContent = `${winner} is to be pitied!`;
             createConfetti();
@@ -252,49 +273,14 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 20px Arial';
-                // Rotate text 180 degrees so it's readable from outside the wheel
-                ctx.rotate(Math.PI);
-                ctx.fillText(names[i], -140, 0);
+                ctx.fillText(names[i], 140, 0);
                 ctx.restore();
             }
 
             ctx.restore();
         }
 
-function spin() {
-            if (spinning || names.length < 2) return;
 
-            spinning = true;
-            spinSpeed = Math.random() * 0.2 + 0.1;
-            resultDiv.textContent = '';
-
-            function animate() {
-                currentRotation += spinSpeed;
-                spinSpeed *= 0.99;
-                drawWheel();
-
-                if (spinSpeed > 0.001) {
-                    requestAnimationFrame(animate);
-                } else {
-                    spinning = false;
-                    announceWinner();
-                }
-            }
-
-            animate();
-        }
-
-        function announceWinner() {
-            const totalSlices = names.length;
-            const sliceAngle = (2 * Math.PI) / totalSlices;
-            // Calculate the index of the winning slice
-            const winningIndex = Math.floor(((2 * Math.PI - (currentRotation % (2 * Math.PI))) % (2 * Math.PI)) / sliceAngle);
-            const winner = names[winningIndex];
-            resultDiv.textContent = `${winner} is to be pitied!`;
-            createConfetti();
-            animateBigName(winner);
-            flashWinningSlice(winningIndex);
-        }
 
         function flashWinningSlice(winningIndex) {
             let flashCount = 0;
