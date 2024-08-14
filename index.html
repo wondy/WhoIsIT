@@ -61,6 +61,10 @@
         input[type="text"]:focus {
             border-color: #007bff;
         }
+        input[type="text"]:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -106,6 +110,7 @@
             border: none;
             border-radius: 5px;
             transition: background-color 0.3s;
+            margin-top: 30px;
         }
         #spinBtn:hover {
             background-color: #218838;
@@ -157,6 +162,13 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+        #resetBtn {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+        #resetBtn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +180,7 @@
                 <button id="addName"><i class="fas fa-plus"></i> Add</button>
             </div>
             <div class="name-list" id="nameList"></div>
+            <button id="resetBtn">Reset</button>
         </div>
         <div class="right-panel">
             <h1>Who is to be pitied?</h1>
@@ -190,6 +203,7 @@
         const addNameBtn = document.getElementById('addName');
         const nameList = document.getElementById('nameList');
         const bigNameDiv = document.getElementById('bigName');
+        const resetBtn = document.getElementById('resetBtn');
 
         let names = [];
         const colors = ['#4ECDC4', '#45B7D1', '#FFA07A', '#FF6B6B', '#20B2AA', '#9370DB', '#3CB371', '#FF69B4', '#F0E68C', '#CD853F'];
@@ -283,11 +297,14 @@
 
         function addName() {
             const name = nameInput.value.trim();
-            if (name && names.length < 10) {
+            if (name && names.length < 10 && !names.includes(name)) {
                 names.push(name);
                 updateNameList();
                 drawWheel();
                 nameInput.value = '';
+                checkNameLimit();
+            } else if (names.includes(name)) {
+                alert('This name is already on the wheel!');
             }
         }
 
@@ -308,9 +325,14 @@
         function editName(index) {
             const newName = prompt('Edit name:', names[index]);
             if (newName !== null) {
-                names[index] = newName.trim();
-                updateNameList();
-                drawWheel();
+                const trimmedName = newName.trim();
+                if (trimmedName && !names.includes(trimmedName)) {
+                    names[index] = trimmedName;
+                    updateNameList();
+                    drawWheel();
+                } else if (names.includes(trimmedName)) {
+                    alert('This name is already on the wheel!');
+                }
             }
         }
 
@@ -318,6 +340,7 @@
             names.splice(index, 1);
             updateNameList();
             drawWheel();
+            checkNameLimit();
         }
 
         function createConfetti() {
@@ -355,11 +378,33 @@
             });
         }
 
+        function checkNameLimit() {
+            if (names.length >= 10) {
+                nameInput.disabled = true;
+                addNameBtn.disabled = true;
+            } else {
+                nameInput.disabled = false;
+                addNameBtn.disabled = false;
+            }
+        }
+
+        function resetWheel() {
+            names = [];
+            currentRotation = 0;
+            spinSpeed = 0;
+            spinning = false;
+            updateNameList();
+            drawWheel();
+            checkNameLimit();
+            resultDiv.textContent = '';
+        }
+
         spinBtn.addEventListener('click', spin);
         addNameBtn.addEventListener('click', addName);
         nameInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') addName();
         });
+        resetBtn.addEventListener('click', resetWheel);
 
         drawWheel();
     </script>
