@@ -241,9 +241,11 @@
             // Normalize the rotation to be between 0 and 2PI
             const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             
+            // Adjust for the pointer position (top of the wheel)
+            const adjustedRotation = normalizedRotation + Math.PI / 2;
+            
             // Calculate the winning index
-            // We add PI/2 to align with the top (red arrow) and use Math.floor
-            const winningIndex = Math.floor(((normalizedRotation + Math.PI / 2) % (2 * Math.PI)) / sliceAngle);
+            const winningIndex = Math.floor((adjustedRotation % (2 * Math.PI)) / sliceAngle);
             
             const winner = names[winningIndex];
             resultDiv.textContent = `${winner} is to be pitied!`;
